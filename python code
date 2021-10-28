@@ -1,0 +1,68 @@
+from tkinter import *
+from tkinter.ttk import Label,Combobox
+from tkinter import ttk
+import pytube
+import os
+
+def YT():
+    global titulo
+    url=str(URL.get())
+    formato=str(Formato.get())
+    
+    if formato=="mp4":
+        youtube= pytube.YouTube(url)
+        video=youtube.streams.first()
+        video.download()
+        titulo=youtube.title
+        
+    elif formato=="mp3":
+        youtube= pytube.YouTube(url)
+        video = youtube.streams.filter(only_audio=True).first()
+        archivo=video.download()
+        base, ext= os.path.splitext(archivo)
+        nuevo_archivo=base+".mp3"
+        os.rename(archivo,nuevo_archivo)
+        titulo=youtube.title
+        
+
+
+
+
+
+#Configuracion inicial de la aplicación   
+ventana=Tk()
+ventana.title("Youtube2MP3")
+ventana.geometry("650x300")
+ventana.configure(background="#8093F1")
+ventana.resizable(False, False)
+#ventana.iconbitmap("Icono.ico")
+
+
+
+#Contenido y distribucion    
+
+
+label= Label(ventana,text="URL del Video:",font=("Verdana",14),background="#8093F1",foreground="white").pack(anchor=NW,pady=2.5,padx=10)          
+            
+URL=StringVar()   #El enlace se guarda en la variable URL
+URL_Entry=Entry(ventana, textvariable=URL,width=550,background="#F8E5EE",foreground="black",font=("Gabriola",13)).pack(pady=2.5,padx=10) 
+
+label2= Label(ventana,text="Formato",font=("Verdana",12),background="#8093F1",foreground="white").pack(pady=2.5,padx=2.5)
+
+Formato=StringVar()        
+Formato_Entry=Combobox(ventana,textvariable=Formato)  
+Formato_Entry['values']=('mp3','mp4')
+Formato_Entry.state(["readonly"])
+Formato_Entry.pack(pady=5) #El formato se guarda en la variable Formato
+
+label3=Label(ventana,text="Nota* Los archivos seran descargados en el mismo directorio sobre el que se encuentre el programa",font=("Verdana",9),foreground="red",background="#8093F1").pack(pady=5,padx=2.5)
+
+Boton=Button(ventana,text="Convertir video",background="#F8E5EE",command=YT).pack(pady=7.5) 
+
+
+label5=Label(ventana,text="JJGF",font=("Verdana",8),foreground="black",background="#8093F1").pack(anchor=SE, side=BOTTOM)
+       
+
+
+#Mantiene la ventana abierta hasta que el usuario lo cierre
+ventana.mainloop() 
